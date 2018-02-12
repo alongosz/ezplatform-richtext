@@ -1,1 +1,11 @@
+parameters:
+    ezplatform.field_type.ezrichtext.custom_tags.translation_domain: 'custom_tags'
+
 services:
+    # Custom Tags UI translations extractor
+    EzSystems\EzPlatformRichTextFieldType\UI\Translation\CustomTagsTranslationExtractor:
+        arguments:
+            $customTagsConfiguration: '%ezplatform.ezrichtext.custom_tags%'
+            $translationDomain: '%ezplatform.field_type.ezrichtext.custom_tags.translation_domain%'
+        tags:
+            - { name: jms_translation.extractor, alias: 'ez_richtext_custom_tags' }
