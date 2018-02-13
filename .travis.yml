@@ -1,0 +1,41 @@
+dist: trusty
+
+language: php
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 7.1
+      env: PHPUNIT_CONFIG="phpunit.xml"
+    - php: 7.1
+      env: PHP_CS_FIXER="true"
+
+# test only master, stable branches and pull requests
+branches:
+  only:
+    - master
+    - /^\d.\d+$/
+
+before_install:
+    # Disable memory_limit for composer
+    - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+    # Disable XDebug for better performance
+    - phpenv config-rm xdebug.ini
+    # Get latest composer build
+    - travis_retry composer selfupdate
+
+install:
+  - composer install --no-progress --no-interaction --no-suggest --prefer-dist
+
+# execute CI tasks based on env setup
+script:
+  - if [ -n "${PHPUNIT_CONFIG}" ] ; then php ./vendor/bin/phpunit -c "${PHPUNIT_CONFIG}" ; fi
+  - if [ "${PHP_CS_FIXER}" == "true" ] ; then php ./vendor/bin/php-cs-fixer fix -v --dry-run --diff --show-progress=estimating ; fi
+
+# reduce depth (history) of git checkout
+git:
+  depth: 30
