@@ -6,7 +6,7 @@
  */
 declare(strict_types=1);
 
-namespace EzSystems\EzPlatformRichText\Templating\Twig\Extension;
+namespace EzSystems\EzPlatformRichTextBundle\Templating\Twig\Extension;
 
 use EzSystems\EzPlatformRichText\eZ\RichText\Converter as RichTextConverterInterface;
 use Twig_Extension;
