@@ -63,21 +63,17 @@ class Template extends Render implements Converter
         $xpath = new DOMXPath($document);
         $xpath->registerNamespace('docbook', 'http://docbook.org/ns/docbook');
         $xpathExpression = '//docbook:eztemplate | //docbook:eztemplateinline';
-
         $templates = $xpath->query($xpathExpression);
         /** @var \DOMElement[] $templatesSorted */
         $templatesSorted = [];
-        $maxDepth = 0;
 
         foreach ($templates as $template) {
+            /** @var \DOMElement $template */
             $depth = $this->getNodeDepth($template);
-            if ($depth > $maxDepth) {
-                $maxDepth = $depth;
-            }
             $templatesSorted[$depth][] = $template;
         }
 
-        ksort($templatesSorted, SORT_NUMERIC);
+        krsort($templatesSorted, SORT_NUMERIC);
 
         foreach ($templatesSorted as $templates) {
             foreach ($templates as $template) {
@@ -102,25 +98,17 @@ class Template extends Render implements Converter
         $parameters = [
             'name' => $templateName,
             'params' => $this->extractConfiguration($template),
+            'content' => '',
         ];
 
         if ($template->getElementsByTagName('ezcontent')->length > 0) {
             $contentNode = $template->getElementsByTagName('ezcontent')->item(0);
-            switch ($templateType) {
-                case 'style':
-                    $parameters['content'] = $this->getCustomStyleContent($contentNode);
-                    break;
-                case 'tag':
-                default:
-                    $parameters['content'] = $this->getCustomTagContent($contentNode);
-                    break;
-            }
+            $parameters['content'] = $this->getCustomTemplateContent($contentNode);
         }
 
         if ($template->hasAttribute('ezxhtml:align')) {
             $parameters['align'] = $template->getAttribute('ezxhtml:align');
         }
-
         $content = $this->renderer->renderTemplate(
             $templateName,
             $templateType,
@@ -184,18 +172,6 @@ class Template extends Render implements Converter
     }
 
     /**
-     * Returns XML fragment string for given $node.
-     *
-     * @param \DOMNode $node
-     *
-     * @return string
-     */
-    protected function saveNodeXML(DOMNode $node)
-    {
-        return $this->getCustomTagContent($node);
-    }
-
-    /**
      * Returns XML fragment string for given converted $node.
      *
      * @param \DOMNode $node
@@ -229,7 +205,7 @@ class Template extends Render implements Converter
      *
      * @return string
      */
-    protected function getCustomTagContent(DOMNode $node)
+    protected function getCustomTemplateContent(DOMNode $node)
     {
         $xmlString = '';
 
@@ -239,5 +215,27 @@ class Template extends Render implements Converter
         }
 
         return $xmlString;
+    }
+
+    /**
+     * Extracts configuration hash from embedded template.
+     *
+     * @param \DOMElement $template
+     *
+     * @return array
+     */
+    protected function extractConfiguration(DOMElement $template)
+    {
+        $hash = [];
+
+        $xpath = new DOMXPath($template->ownerDocument);
+        $xpath->registerNamespace('docbook', 'http://docbook.org/ns/docbook');
+        $configValuesNodes = $xpath->query('./docbook:ezconfig', $template);
+
+        if ($configValuesNodes->length) {
+            $hash = $this->extractHash($configValuesNodes->item(0));
+        }
+
+        return $hash;
     }
 }
