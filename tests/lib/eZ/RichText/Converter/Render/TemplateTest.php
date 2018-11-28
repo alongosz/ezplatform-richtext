@@ -35,6 +35,10 @@ class TemplateTest extends TestCase
 
     public function providerForTestConvert()
     {
+        $nestedCustomTagXml = file_get_contents(
+            __DIR__ . '/../../../../../integration/eZ/API/_fixtures/ezrichtext/custom_tags/invalid/nested.xml'
+        );
+
         return [
             [
                 '<?xml version="1.0" encoding="UTF-8"?>
@@ -310,6 +314,20 @@ class TemplateTest extends TestCase
                 ],
             ],
             [
+                $nestedCustomTagXml,
+                $nestedCustomTagXml,
+                [
+                    [
+                        'name' => 'video',
+                        'is_inline' => false,
+                        'params' => [
+                            'name' => 'video',
+                            'params' => ['title' => 'Test', 'width' => 640, 'autoplay' => 'false'],
+                        ],
+                    ],
+                ],
+            ],
+            [
                 '<?xml version="1.0" encoding="UTF-8"?>
 <section xmlns="http://docbook.org/ns/docbook" xmlns:ezcustom="http://ez.no/xmlns/ezpublish/docbook/custom">
   <eztemplate name="style1" type="style"><ezcontent>style 1 content</ezcontent></eztemplate>
@@ -379,7 +397,7 @@ class TemplateTest extends TestCase
         if (!empty($renderParams)) {
             $convertIndex = 0;
             foreach ($renderParams as $index => $params) {
-                if (!empty($params['type']) && $params['type'] === 'style') {
+                if (!empty($params['type']['content'])) {
                     // mock simple converter
                     $contentDoc = new DOMDocument();
                     $contentDoc->appendChild($contentDoc->createTextNode($params['params']['content']));

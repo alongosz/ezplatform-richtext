@@ -1,0 +1,15 @@
+repositories:
+    default:
+        storage: ~
+        search:
+            engine: 'legacy'
+            connection: default
+
+siteaccess:
+    list: [site, admin]
+    groups:
+        site_group: [site]
+        admin_group: [admin]
+    default_siteaccess: site
+    match:
+        URIElement: 1

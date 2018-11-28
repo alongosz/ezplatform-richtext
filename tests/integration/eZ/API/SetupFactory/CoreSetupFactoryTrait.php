@@ -80,7 +80,8 @@ trait CoreSetupFactoryTrait
                 ->setArguments([new Reference('ezpublish.cache_pool.driver.redis'), '', 120]);
         }
 
-        $containerBuilder->setParameter('ezpublish.kernel.root_dir', realpath($kernelRootDir));
+        $containerBuilder->setParameter('kernel.root_dir', $kernelRootDir);
+        $containerBuilder->setParameter('ezpublish.kernel.root_dir', $kernelRootDir);
 
         $containerBuilder->addCompilerPass(new Compiler\FieldTypeCollectionPass());
         $containerBuilder->addCompilerPass(new Compiler\FieldTypeNameableCollectionPass());

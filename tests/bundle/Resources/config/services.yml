@@ -1,0 +1,7 @@
+parameters:
+    kernel.charset: UTF8
+    kernel.secret: NoSecretForTests
+
+services:
+    security.authorization_checker:
+        class: EzSystems\Tests\EzPlatformRichTextBundle\SetupFactory\Service\NullAuthorizationChecker
