@@ -1,0 +1,19 @@
+services:
+    ezrichtext.converter.input.xhtml5:
+        class: EzSystems\EzPlatformRichText\eZ\RichText\Converter\Aggregate
+        arguments:
+            $converters: !tagged ezpublish.ezrichtext.converter.input.xhtml5
+
+    ezrichtext.converter.input.xhtml5.core:
+        class: EzSystems\EzPlatformRichTextBundle\eZ\RichText\Converter\Html5Input
+        arguments:
+            - '%ezrichtext.converter.input.xhtml5.resources%'
+            - '@ezpublish.config.resolver'
+        tags:
+            - { name: ezpublish.ezrichtext.converter.input.xhtml5, priority: 10 }
+
+    # Note: should run before xsl transformation
+    ezrichtext.converter.input.xhtml5.programlisting:
+        class: EzSystems\EzPlatformRichText\eZ\RichText\Converter\ProgramListing
+        tags:
+            - { name: ezpublish.ezrichtext.converter.input.xhtml5, priority: 50 }

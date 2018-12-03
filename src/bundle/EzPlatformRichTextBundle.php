@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace EzSystems\EzPlatformRichTextBundle;
 
 use eZ\Bundle\EzPublishCoreBundle\DependencyInjection\EzPublishCoreExtension;
-use EzSystems\EzPlatformRichTextBundle\DependencyInjection\Compiler\RichTextHtml5ConverterPass;
 use EzSystems\EzPlatformRichTextBundle\DependencyInjection\Configuration\Parser\FieldType\RichText;
 use EzSystems\EzPlatformRichTextBundle\DependencyInjection\EzPlatformRichTextExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -39,7 +38,6 @@ class EzPlatformRichTextBundle extends Bundle
         $core = $container->getExtension('ezpublish');
         $core->addDefaultSettings(__DIR__ . '/Resources/config', ['default_settings.yml']);
 
-        $container->addCompilerPass(new RichTextHtml5ConverterPass());
         $this->registerConfigParser($container);
     }
 

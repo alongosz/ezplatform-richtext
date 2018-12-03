@@ -10,11 +10,12 @@ namespace EzSystems\EzPlatformRichText\eZ\RichText;
 
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 use DOMDocument;
+use EzSystems\EzPlatformRichText\SPI\ConverterDispatcher as SPIConverterDispatcher;
 
 /**
  * Dispatcher for various converters depending on the XML document namespace.
  */
-class ConverterDispatcher
+class ConverterDispatcher implements SPIConverterDispatcher
 {
     /**
      * Mapping of namespaces to converters.
@@ -53,7 +54,7 @@ class ConverterDispatcher
      *
      * @return \DOMDocument
      */
-    public function dispatch(DOMDocument $document)
+    public function dispatch(DOMDocument $document): DOMDocument
     {
         $documentNamespace = $document->documentElement->lookupNamespaceURI(null);
         // checking for null as ezxml has no default namespace...

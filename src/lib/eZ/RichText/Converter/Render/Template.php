@@ -24,11 +24,6 @@ use Psr\Log\NullLogger;
 class Template extends Render implements Converter
 {
     /**
-     * @var \EzSystems\EzPlatformRichText\eZ\RichText\Converter
-     */
-    private $richTextConverter;
-
-    /**
      * @var \Psr\Log\LoggerInterface
      */
     private $logger;
@@ -37,15 +32,12 @@ class Template extends Render implements Converter
      * RichText Template converter constructor.
      *
      * @param \EzSystems\EzPlatformRichText\eZ\RichText\RendererInterface $renderer
-     * @param \EzSystems\EzPlatformRichText\eZ\RichText\Converter $richTextConverter
      * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
         RendererInterface $renderer,
-        Converter $richTextConverter,
         LoggerInterface $logger = null
     ) {
-        $this->richTextConverter = $richTextConverter;
         $this->logger = $logger ?? new NullLogger();
 
         parent::__construct($renderer);
@@ -169,33 +161,6 @@ class Template extends Render implements Converter
         }
 
         return $depth;
-    }
-
-    /**
-     * Returns XML fragment string for given converted $node.
-     *
-     * @param \DOMNode $node
-     *
-     * @return string
-     */
-    protected function getCustomStyleContent(DOMNode $node)
-    {
-        $innerDoc = new DOMDocument();
-
-        /** @var \DOMNode $child */
-        foreach ($node->childNodes as $child) {
-            $newNode = $innerDoc->importNode($child, true);
-            if ($newNode === false) {
-                $this->logger->warning(
-                    "Failed to import Custom Style content of node '{$child->getNodePath()}'"
-                );
-            }
-            $innerDoc->appendChild($newNode);
-        }
-
-        $convertedInnerDoc = $this->richTextConverter->convert($innerDoc);
-
-        return trim($convertedInnerDoc->saveHTML());
     }
 
     /**

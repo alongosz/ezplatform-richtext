@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace EzSystems\IntegrationTests\EzPlatformRichText\eZ\API\SetupFactory;
 
-use EzSystems\EzPlatformRichTextBundle\DependencyInjection\Compiler;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -37,7 +36,5 @@ trait RichTextSetupFactoryTrait
         $loader->load('indexable_fieldtypes.yml');
         $loader->load('storage_engines/legacy/external_storage_gateways.yml');
         $loader->load('storage_engines/legacy/field_value_converters.yml');
-
-        $containerBuilder->addCompilerPass(new Compiler\RichTextHtml5ConverterPass());
     }
 }

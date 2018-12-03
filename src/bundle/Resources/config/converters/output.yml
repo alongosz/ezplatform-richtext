@@ -1,0 +1,54 @@
+parameters:
+    ezrichtext.converter.output.xhtml5.resources: '%ezrichtext.resources%/stylesheets/docbook/xhtml5/output/xhtml5.xsl'
+    ezrichtext.converter.output.xhtml5.fragment.resources: '%ezrichtext.resources%/stylesheets/xhtml5/output/fragment.xsl'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    EzSystems\EzPlatformRichText\eZ\RichText\Converter\Output\Dispatcher:
+        arguments:
+            $converters: !tagged ezpublish.ezrichtext.converter.output.xhtml5
+
+    EzSystems\EzPlatformRichText\eZ\RichText\Converter\Output\Converter: ~
+
+    EzSystems\EzPlatformRichText\SPI\ConverterDispatcher:
+        alias: EzSystems\EzPlatformRichText\eZ\RichText\Converter\Output\Dispatcher
+
+    ezrichtext.converter.output.xhtml5:
+        alias: EzSystems\EzPlatformRichText\eZ\RichText\Converter\Output\Converter
+
+    ezrichtext.converter.link:
+        class: EzSystems\EzPlatformRichText\eZ\RichText\Converter\Link
+        tags:
+            - { name: ezpublish.ezrichtext.converter.output.xhtml5, priority: 40 }
+
+    ezrichtext.converter.embed:
+        class: EzSystems\EzPlatformRichText\eZ\RichText\Converter\Render\Embed
+        tags:
+            - { name: ezpublish.ezrichtext.converter.output.xhtml5, priority: 30 }
+
+    ezrichtext.converter.template:
+        class: EzSystems\EzPlatformRichText\eZ\RichText\Converter\Render\Template
+        arguments:
+            - '@ezrichtext.renderer'
+            - '@?logger'
+        tags:
+            - { name: ezpublish.ezrichtext.converter.output.xhtml5, priority: 20 }
+
+    ezrichtext.converter.output.xhtml5.core:
+        class: EzSystems\EzPlatformRichTextBundle\eZ\RichText\Converter\Html5
+        arguments:
+            - '%ezrichtext.converter.output.xhtml5.resources%'
+            - '@ezpublish.config.resolver'
+        tags:
+            - { name: ezpublish.ezrichtext.converter.output.xhtml5, priority: 10 }
+
+    # Note: should typically be the last one as it produces embeddable fragment
+    ezrichtext.converter.output.xhtml5.fragment:
+        class: EzSystems\EzPlatformRichText\eZ\RichText\Converter\Xslt
+        arguments: ['%ezrichtext.converter.output.xhtml5.fragment.resources%']
+        tags:
+            - { name: ezpublish.ezrichtext.converter.output.xhtml5, priority: 0 }

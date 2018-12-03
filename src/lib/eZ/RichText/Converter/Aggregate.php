@@ -24,9 +24,9 @@ class Aggregate implements Converter
     protected $converters = [];
 
     /**
-     * @param \EzSystems\EzPlatformRichText\eZ\RichText\Converter[] $converters An array of Converters, sorted by priority
+     * @param iterable $converters List of tagged Converters
      */
-    public function __construct(array $converters = [])
+    public function __construct(iterable $converters)
     {
         $this->converters = $converters;
     }
